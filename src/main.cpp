@@ -42,7 +42,7 @@ int main()
     auto a = p.toPacket(data);
 
     QUdpSocket socket;
-    socket.writeDatagram((const char *)a.pPacket, a.packetLen, QHostAddress::Broadcast, 161);
+    socket.writeDatagram((const char *)a.data, a.size, QHostAddress::Broadcast, 161);
 
     while(socket.bytesAvailable() <= 0);
 
@@ -67,6 +67,9 @@ int main()
     {
         cout << "VAR=" << int(var->getType()) << "   " << var->toString() << endl;
     }
+
+    SNMP_object oid("1.3.6.1.4.1.53002.31.1.4.1.0");
+    cout << (*aaa.getVarBindingsList()->vb->getOid().get() == oid) << endl;
     return 0;
 }
 
@@ -92,7 +95,7 @@ int x()
 //    ll.push_back("1.3.6.1.4.53002.1.3.0");
     SnmpParser::snmpPacket pac  = SNMP_ManagerRequest::createGetRequest(SNMP_VERSION::V1, "public", 0, ll);
 
-    for(uint8_t *pp = pac.pPacket; pp != pac.pPacket+pac.packetLen; ++pp)
+    for(uint8_t *pp = pac.data; pp != pac.data+pac.size; ++pp)
     {
         printf("%02X", (int)*pp);
     }

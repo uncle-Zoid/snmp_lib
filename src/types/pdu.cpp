@@ -35,7 +35,7 @@ void Pdu::setPduType(const uint8_t &pdu)
     pduType_ = pdu;
 }
 
-int Pdu::getRequestId() const
+uint32_t Pdu::getRequestId() const
 {
     return requestId_;
 }
@@ -48,7 +48,7 @@ void Pdu::setErrorStatus(int errorStatus)
 {
     errorStatus_ = errorStatus;
 }
-void Pdu::setRequestId(int requestId)
+void Pdu::setRequestId(uint32_t requestId)
 {
     requestId_ = requestId;
 }
@@ -115,7 +115,7 @@ bool Pdu::readPduHeader(uint8_t *&pData, const uint8_t *pDataEnd)
         return false; // malo dat
     }
     si.readFromSNMP(pdu);
-    requestId_ = si.getValue();
+    requestId_ = uint32_t(si.getValue());
 
     // precti error-status
     pdu = SnmpParser::readItem(pData, pDataEnd);
@@ -206,7 +206,7 @@ int Pdu::copyToSNMP(uint8_t *pData, int dataLen)
     uint8_t encodedVBLsize[5];
     int vblEncodedLenLen = LenghtCoder::encodeLenght(encodedVBLsize, 5, vblTotalLen);
 
-    SNMP_int siId(requestId_);
+    SNMP_int siId(static_cast<int>(requestId_));
     SNMP_int siErrs(errorStatus_);
     SNMP_int siErr(errorIndex_);
 
@@ -280,7 +280,7 @@ uint8_t Pdu::getType()
 int Pdu::getItemSize()
 {    
     int length = 0;//3x typ int
-    SNMP_int si(requestId_);
+    SNMP_int si(static_cast<int>(requestId_));
     length += si.getItemSize();
     si.setValue(errorStatus_);
     length += si.getItemSize();

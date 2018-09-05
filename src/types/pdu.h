@@ -29,7 +29,7 @@ class Pdu : public SNMP_type
 {    
     bool isValid_;
     uint8_t pduType_;
-    int requestId_;
+    uint32_t requestId_;
     int errorStatus_;
     int errorIndex_;
 //    std::vector<snmp::itemVarBinding> oids_;
@@ -46,10 +46,10 @@ public:
     void clear();
     uint8_t getPduType() const;
     void setPduType(const uint8_t &pdu);
-    int getRequestId() const;
+    uint32_t getRequestId() const;
     int getErrorStatus() const;
     void setErrorStatus(int errorStatus);
-    void setRequestId(int requestId);
+    void setRequestId(uint32_t requestId);
     int getErrorIndex() const;
     void setErrorIndex(int errorIndex);
     shared_ptr<VarBindingList> getVarBindingList() const;

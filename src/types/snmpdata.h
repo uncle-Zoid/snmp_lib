@@ -18,7 +18,7 @@ private:
     bool isValid_;
     SNMP_VERSION version_;
     uint8_t pdu_;
-    int requestId_;
+    uint32_t requestId_;
     int errorStatus_;
     int errorIndex_;
     std::string community_;
@@ -36,6 +36,16 @@ public:
         , errorIndex_(0)
         , community_("")
         {}
+
+    SnmpData(SNMP_VERSION v, const std::string &community, uint32_t requestId, uint8_t pduType)
+        : isValid_(true)
+        , version_(v)
+        , pdu_(pduType)
+        , requestId_(requestId)
+        , errorStatus_(0)
+        , errorIndex_(0)
+        , community_(community)
+    {}
 
     // ***************************
     // *** GETTERS and SETTERS ***
@@ -71,11 +81,11 @@ public:
     {
         pdu_ = pdu;
     }
-    int getRequestId() const
+    uint32_t getRequestId() const
     {
         return requestId_;
     }
-    void setRequestId(int requestId)
+    void setRequestId(uint32_t requestId)
     {
         requestId_ = requestId;
     }

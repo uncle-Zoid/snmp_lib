@@ -19,20 +19,23 @@ public:
     struct snmpPacket
     {
         snmpPacket()
-            : packetLen(0)
-            , pPacket(NULL)
-            , isCorrect(false)
+            : size      (0)
+            , data      (nullptr)
+            , isCorrect (false)
             { }
 
-        int packetLen;
-        uint8_t *pPacket;
+        int size;
+        uint8_t *data;
+
+        std::vector<uint32_t> hosts;
+
         bool isCorrect;
     };
 
     SnmpParser()
     {}
 
-    SnmpData parse(uint8_t *pData, int dataLen);
+    SnmpData parse(const uint8_t *pData, int dataLen);
     SnmpParser::snmpPacket toPacket(SnmpData &data);
 
 protected:

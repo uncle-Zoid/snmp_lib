@@ -1,6 +1,8 @@
 #include "snmp_object.h"
 #include "types/types.h"
 
+#include <algorithm>
+
 using namespace std;
 
 SNMP_object::SNMP_object()
@@ -14,6 +16,15 @@ SNMP_object::SNMP_object(const string &oid)
     setValue(oid);
 }
 
+bool SNMP_object::operator==(const SNMP_object &other)
+{
+    if (!isValid_ || !other.isValid())
+    {
+        return false;
+    }
+
+    return std::equal(oidArray_.begin(), oidArray_.end(), other.oidArray_.begin());
+}
 
 bool SNMP_object::isValid() const
 {
@@ -29,7 +40,7 @@ void SNMP_object::clear()
 
 string SNMP_object::getValue(bool *isValid) const
 {
-    if(isValid != NULL)
+    if(isValid != nullptr)
         *isValid = isValid_;
     return oid_;
 }
@@ -38,6 +49,7 @@ void SNMP_object::setValue(const string &oid)
 {
     oid_ = oid;
     stringToNumArray(oid);
+    isValid_ = true;
 //    isValid_ = encode(oid_, encodedOid_);
 //    createSnmpItem(toSnmp_, encodedOid_);
 }

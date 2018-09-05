@@ -38,11 +38,12 @@ class SNMP_LIBRARY_EXPORT SNMP_object : public SNMP_type
 public:
     SNMP_object();
     SNMP_object(const string &oid);
-    virtual ~SNMP_object(){}
+    virtual ~SNMP_object() override = default;
 
+    bool operator ==(const SNMP_object &other);
     void clear();
     bool isValid() const;
-    std::string getValue(bool *isValid = NULL) const;
+    std::string getValue(bool *isValid = nullptr) const;
     void setValue(const string &oid);
 
 

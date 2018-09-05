@@ -42,7 +42,7 @@ snmp::itemTLV SnmpParser::readItem(uint8_t *&pData, const uint8_t *pDataEnd)
 
 
 
-SnmpData SnmpParser::parse(uint8_t *pData, int dataLen)       // zpracovani snmp packetu
+SnmpData SnmpParser::parse(const uint8_t *pData, int dataLen)       // zpracovani snmp packetu
 {
     SnmpData data;
     processSnmp(pData, dataLen, data);
@@ -121,11 +121,11 @@ SnmpParser::snmpPacket SnmpParser::toPacket(SnmpData &data)
 ////    cout << "SnmpParser::toPacket, packet size: " << maxPacketSize << endl;
 
     snmpPacket packet;
-    packet.pPacket = new uint8_t[maxPacketSize];
-    memset(packet.pPacket, 0xcc, maxPacketSize); // NOTE, docasne, odstranit
+    packet.data = new uint8_t[maxPacketSize];
+    memset(packet.data, 0xcc, maxPacketSize); // NOTE, docasne, odstranit
 
     // zapis do snmp packetu
-    uint8_t *pPos = packet.pPacket;
+    uint8_t *pPos = packet.data;
     *pPos ++ = TAG_SEQ;                 // 0x30
     memcpy(pPos, buff, lenoflen);       // snmp data size
     pPos += lenoflen;
@@ -149,7 +149,7 @@ SnmpParser::snmpPacket SnmpParser::toPacket(SnmpData &data)
     }
 
     packet.isCorrect = true;
-    packet.packetLen = maxPacketSize;
+    packet.size = maxPacketSize;
 
     return packet;
 }
