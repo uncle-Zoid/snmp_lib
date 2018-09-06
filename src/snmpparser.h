@@ -18,25 +18,42 @@ public:
     // datova polozka
     struct snmpPacket
     {
+        int size;
+        uint8_t *data;
+        bool isCorrect;
+
+        std::vector<uint32_t> hosts;
+
         snmpPacket()
             : size      (0)
             , data      (nullptr)
             , isCorrect (false)
             { }
 
-        int size;
-        uint8_t *data;
+        snmpPacket(int size)
+            : size      (size)
+            , isCorrect (true)
+        {
+            data = new uint8_t[size];
+        }
 
-        std::vector<uint32_t> hosts;
+        ~snmpPacket()
+        {
+            if(data != nullptr)
+            {
+                delete [] data;
+                data = nullptr;
+                size = 0;
+            }
+        }
 
-        bool isCorrect;
     };
 
     SnmpParser()
     {}
 
     SnmpData parse(const uint8_t *pData, int dataLen);
-    SnmpParser::snmpPacket toPacket(SnmpData &data);
+    SnmpParser::snmpPacket* toPacket(SnmpData &data);
 
 protected:
 

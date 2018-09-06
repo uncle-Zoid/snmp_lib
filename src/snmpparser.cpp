@@ -101,7 +101,7 @@ void SnmpParser::processSnmp(const uint8_t *pData, int dataLen, SnmpData &data)
 //qDebug(" SnmpParser::processSnmp\end");
 }
 
-SnmpParser::snmpPacket SnmpParser::toPacket(SnmpData &data)
+SnmpParser::snmpPacket *SnmpParser::toPacket(SnmpData &data)
 {    
     SNMP_int si(data.getVersion());
     SNMP_octetString so(data.getCommunity());
@@ -116,16 +116,16 @@ SnmpParser::snmpPacket SnmpParser::toPacket(SnmpData &data)
     int totalWritten = 0;
     int maxPacketSize = si.getItemSize() + so.getItemSize() + pdu.getItemSize(); // velikost packetu bez 0x30 a delkyDat
     uint8_t buff[5];
-    int lenoflen = LenghtCoder::encodeLenght(buff, 5, maxPacketSize);           // zakodovana delka dat v snmp
+    size_t lenoflen = size_t(LenghtCoder::encodeLenght(buff, 5, maxPacketSize));           // zakodovana delka dat v snmp
     maxPacketSize += LenghtCoder::getLenghtOfLenght(maxPacketSize) + 1/*snmp header 0x30*/; // celkova velikost snmp packetu
 ////    cout << "SnmpParser::toPacket, packet size: " << maxPacketSize << endl;
 
-    snmpPacket packet;
-    packet.data = new uint8_t[maxPacketSize];
-    memset(packet.data, 0xcc, maxPacketSize); // NOTE, docasne, odstranit
+    snmpPacket *packet = new snmpPacket(maxPacketSize);
+//    packet.data = new uint8_t[maxPacketSize];
+//    memset(packet.data, 0xcc, maxPacketSize); // NOTE, docasne, odstranit
 
     // zapis do snmp packetu
-    uint8_t *pPos = packet.data;
+    uint8_t *pPos = packet->data;
     *pPos ++ = TAG_SEQ;                 // 0x30
     memcpy(pPos, buff, lenoflen);       // snmp data size
     pPos += lenoflen;
@@ -145,11 +145,8 @@ SnmpParser::snmpPacket SnmpParser::toPacket(SnmpData &data)
     catch(const char * ex)
     {
         cout << ex << endl;
-        return snmpPacket();
+        return nullptr;
     }
-
-    packet.isCorrect = true;
-    packet.size = maxPacketSize;
 
     return packet;
 }
